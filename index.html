@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDFHeaven - Online PDF hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --bg-primary: #f3f4f6;
+      --bg-card: #ffffff;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    [data-theme="dark"] {
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --text-primary: #f3f4f6;
+      --text-secondary: #d1d5db;
+      --bg-primary: #1f2937;
+      --bg-card: #374151;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .book-card {
+      background: var(--bg-card);
+      box-shadow: var(--shadow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    }
+
+    .book-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #genre-select {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border-color: var(--text-secondary);
+      transition: box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease;
+    }
+
+    #genre-select:focus {
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+      border-color: var(--primary);
+    }
+
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid var(--text-secondary);
+      transition: background 0.3s ease, color 0.3s ease, border 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .nav-link {
+      transition: color 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: var(--primary);
+    }
+
+    .cart-count {
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+  </style>
+</head>
+<body data-theme="light" class="transition-all duration-300">
+  <header class="bg-gradient-to-r from-indigo-600 to-purple-500 text-white p-4 sticky top-0 z-10 shadow-lg">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-3xl font-extrabold tracking-tight">PDFHeaven</h1>
+      <nav class="flex items-center gap-6">
+        <select id="genre-select" onchange="filterBooks()" class="px-3 py-2 rounded-lg border focus:ring-2 focus:ring-indigo-500">
+          <option value="">All Genres</option>
+        </select>
+        <button onclick="toggleTheme()" class="theme-toggle px-4 py-2 rounded-lg shadow">
+          <i class="fas fa-moon" id="theme-icon"></i>
+          <span>Toggle Theme</span>
+        </button>
+        <ul class="flex space-x-6 ml-6">
+          <li><a href="#" class="nav-link hover:underline">Home</a></li>
+          <li><a href="#" class="nav-link hover:underline">Browse</a></li>
+          <li><a href="#" class="nav-link hover:underline">Contact</a></li>
+          <li>
+            <a href="cart.html" class="nav-link relative hover:underline">
+              Cart
+              <span id="cart-count" class="cart-count bg-red-500 text-white text-xs rounded-full px-2 py-1 absolute -top-2 -right-4">0</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container mx-auto py-10 px-4">
+    <section class="mb-12">
+      <h2 class="text-4xl font-bold text-center mb-10 text-indigo-600">Free PDFs</h2>
+      <div id="book-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"></div>
+      <h2 class="text-4xl font-bold text-center mt-12 mb-10 text-indigo-600">Premium PDFs</h2>
+      <div id="premium-book-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"></div>
+    </section>
+  </main>
+
+  <footer class="bg-indigo-600 text-white py-6 mt-12 shadow-inner">
+    <div class="container mx-auto text-center text-sm">
+      © 2025 PDFHeaven. All rights reserved by <span class="font-medium">Badhan Roy Amit</span>.
+    </div>
+  </footer>
+
+  <script>
+    const books = [
+      { id: 1, title: "৫২টি প্রোগ্রামিং সমস্যা ও সমাধান", author: "তামিম শাহরিয়ার সুবিন, তাহমিদ রাফি, তামান্না নিশাত রিনি", price: 0, image: "https://ds.rokomari.store/rokomari110/ProductNew20190903/260X372/354f11421_112234.jpg", genre: "Programming", isPremium: false, link: "https://shorturl.at/O6bML" },
+      { id: 2, title: "Mern-Interview-Questions", author: "Ostad online learning platform", price: 0, image: "image.png", genre: "Programming", isPremium: false, link: "https://shorturl.at/STXIN" },
+      { id: 3, title: "Data Communications and Networking", author: "Behrouz A. Forouzan", price: 0, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTp3ZONKjgdfVXfbCpFOAoLXQzt1lU-o4GuaA&s", genre: "Programming", isPremium: false, link: "https://drive.google.com/file/d/example3/view" },
+      { id: 4, title: "Surrender at Dacca - Birth of a Nation", author: "Lt. Gen. JFR Jacob", price: 0, image: "https://opac.northsouth.edu/cgi-bin/koha/opac-image.pl?thumbnail=1&imagenumber=2732", genre: "History", isPremium: false, link: "https://drive.google.com/file/d/example4/view" },
+      { id: 5, title: "উনবিংশতিসংহিতা", author: "পঞ্চানন তর্করত্ন", price: 0, image: "https://shorturl.at/x8LrX", genre: "Religious", isPremium: false, link: "https://drive.google.com/file/d/example5/view" },
+      { id: 6, title: "জোছনা ও জননীর গল্প", author: "হুমায়ুন আহমেদ", price: 0, image: "https://shorturl.at/9PxLQ", genre: "Fiction", isPremium: false, link: "https://drive.google.com/file/d/example6/view" },
+      { id: 7, title: "শ্রীমদ্ভগবদ্গীতা যথাযথ", author: "কৃষ্ণকৃপাশ্রীমূর্তি শ্রীল অভয়চরণারবিন্দ ভক্তিবেদান্ত স্বামী প্রভুপাদ", price: 0, image: "https://sanatandharmatattva.wordpress.com/wp-content/uploads/2018/01/srimadbhagbad-gita-jothajothoi-1-6-pdf-001.jpg", genre: "Religious", isPremium: false, link: "https://drive.google.com/file/d/example7/view" },
+      { id: 8, title: "মেশিন লার্নিং অ্যালগরিদম", author: "নাফিস নিহাল", price: 0, image: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1542351133i/42839600.jpg", genre: "Machine Learning", isPremium: false, link: "https://drive.google.com/file/d/10fbvwtsMv-2LcyqWzH14AklH1v7AeGPx/view?usp=drive_link" },
+      { id: 9, title: "Advanced Python Programming", author: "Dr. John Smith", price: 29.99, image: "python.jpeg", genre: "Programming", isPremium: true },
+      { id: 10, title: "The Art of Deep Learning", author: "Emily Johnson", price: 34.99, image: "deeplearning.jpg", genre: "Machine Learning", isPremium: true },
+      { id: 11, title: "Modern Web Development", author: "Michael Brown", price: 27.50, image: "Webdev.jpg", genre: "Programming", isPremium: true },
+      { id: 12, title: "History of the Digital Age", author: "Sarah Davis", price: 19.99, image: "History of the Digital Age.jpg", genre: "History", isPremium: true }
+    ];
+
+    function getCart() {
+      return JSON.parse(localStorage.getItem("cart")) || [];
+    }
+
+    function saveCart(cart) {
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
+
+    function updateCartCount() {
+      const cart = getCart();
+      document.getElementById("cart-count").textContent = cart.length;
+    }
+
+    function addToCart(id) {
+      const book = books.find(b => b.id === id);
+      if (book && book.isPremium) {
+        const cart = getCart();
+        cart.push(book);
+        saveCart(cart);
+        updateCartCount();
+        alert(`${book.title} added to cart!`);
+      }
+    }
+
+    function populateGenres() {
+      const genreSelect = document.getElementById("genre-select");
+      const genres = [...new Set(books.map(book => book.genre))].sort();
+      genres.forEach(genre => {
+        const option = document.createElement("option");
+        option.value = genre;
+        option.textContent = genre;
+        genreSelect.appendChild(option);
+      });
+    }
+
+    function displayBooks(filteredBooks = books) {
+      const freeBookList = document.getElementById("book-list");
+      const premiumBookList = document.getElementById("premium-book-list");
+      freeBookList.innerHTML = "";
+      premiumBookList.innerHTML = "";
+
+      const freeBooks = filteredBooks.filter(book => !book.isPremium);
+      const premiumBooks = filteredBooks.filter(book => book.isPremium);
+
+      freeBooks.forEach(book => {
+        const card = document.createElement("div");
+        card.className = "book-card p-4 rounded-lg";
+        card.innerHTML = `
+          <img src="${book.image}" alt="${book.title}" class="w-full h-48 object-cover object-top rounded-md mb-4">
+          <h3 class="text-lg font-semibold">${book.title}</h3>
+          <p class="text-sm text-[var(--text-secondary)]">${book.author}</p>
+          <p class="text-sm italic text-[var(--text-secondary)]">Genre: ${book.genre}</p>
+          <a href="${book.link}" target="_blank" class="mt-4 bg-[var(--primary)] text-white px-4 py-2 rounded hover:bg-[var(--primary-hover)] inline-block">Open & Download</a>
+        `;
+        freeBookList.appendChild(card);
+      });
+
+      premiumBooks.forEach(book => {
+        const card = document.createElement("div");
+        card.className = "book-card p-4 rounded-lg";
+        card.innerHTML = `
+          <img src="${book.image}" alt="${book.title}" class="w-full h-48 object-cover object-top rounded-md mb-4">
+          <h3 class="text-lg font-semibold">${book.title}</h3>
+          <p class="text-sm text-[var(--text-secondary)]">${book.author}</p>
+          <p class="text-sm italic text-[var(--text-secondary)]">Genre: ${book.genre}</p>
+          <p class="text-sm font-bold text-[var(--text-primary)]">Price: $${book.price.toFixed(2)}</p>
+          <button onclick="addToCart(${book.id})" class="mt-4 bg-[var(--primary)] text-white px-4 py-2 rounded hover:bg-[var(--primary-hover)]">Add to Cart</button>
+        `;
+        premiumBookList.appendChild(card);
+      });
+    }
+
+    function filterBooks() {
+      const genre = document.getElementById("genre-select").value;
+      const filteredBooks = genre ? books.filter(book => book.genre === genre) : books;
+      displayBooks(filteredBooks);
+    }
+
+    function toggleTheme() {
+      const body = document.body;
+      const currentTheme = body.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      body.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      const icon = document.getElementById('theme-icon');
+      icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    }
+
+    function applyStoredTheme() {
+      const stored = localStorage.getItem('theme');
+      if (stored) {
+        document.body.setAttribute('data-theme', stored);
+        const icon = document.getElementById('theme-icon');
+        icon.className = stored === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      applyStoredTheme();
+      populateGenres();
+      displayBooks();
+      updateCartCount();
+    });
+  </script>
+</body>
+</html>
